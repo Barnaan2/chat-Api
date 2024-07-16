@@ -1,0 +1,5 @@
+Features needed for complete Template
+1. Must contain Documenting tool (Swagger)
+2. Testing Rule(Jest)
+3. Social Authentication(google and facebook)
+4. Rule for coding in strongly consistant manner.

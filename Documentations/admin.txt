@@ -1,0 +1,415 @@
+// adminRoute.js
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   schemas:
+ *     Admin:
+ *       type: object
+ *       required:
+ *         - fullName
+ *         - phoneNumber
+ *         - password
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the admin
+ *         fullName:
+ *           type: string
+ *           description: The full name of the admin
+ *         image:
+ *           type: string
+ *           description: The profile image of the admin
+ *         email:
+ *           type: string
+ *           description: The email of the admin
+ *         phoneNumber:
+ *           type: string
+ *           description: The phone number of the admin
+ *         password:
+ *           type: string
+ *           description: The password of the admin
+ *         role:
+ *           type: string
+ *           enum:
+ *             - Super Admin
+ *             - Admin
+ *           description: The role of the admin
+ *         status:
+ *           type: string
+ *           enum:
+ *             - Active
+ *             - Inactive
+ *           description: The status of the admin
+ *       example:
+ *         id: d5fE_asz
+ *         fullName: John Doe
+ *         email: john.doe@example.com
+ *         phoneNumber: 123-456-7890
+ *         image: profile.jpg
+ *         password: secret
+ *         role: Admin
+ *         status: Active
+ *     LoginRequest:
+ *       type: object
+ *       required:
+ *         - phoneNumber
+ *         - password
+ *       properties:
+ *         phoneNumber:
+ *           type: string
+ *           description: The phone number of the admin
+ *         password:
+ *           type: string
+ *           description: The password of the admin
+ *       example:
+ *         phoneNumber: 123-456-7890
+ *         password: secret
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Admins
+ *   description: The admin managing API
+ */
+
+/**
+ * @swagger
+ * /admin:
+ *   get:
+ *     summary: Get all admins
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of admins
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Some error happened
+ *   post:
+ *     summary: Register a new admin
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Admin'
+ *     responses:
+ *       201:
+ *         description: Admin registered successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Some error happened
+ */
+
+/**
+ * @swagger
+ * /admin/{id}:
+ *   get:
+ *     summary: Get an admin by id
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The admin id
+ *     responses:
+ *       200:
+ *         description: Admin details
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Some error happened
+ *   patch:
+ *     summary: Update an admin by id
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The admin id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Admin'
+ *     responses:
+ *       200:
+ *         description: Admin updated successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Some error happened
+ *   delete:
+ *     summary: Delete an admin by id
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The admin id
+ *     responses:
+ *       204:
+ *         description: Admin deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Some error happened
+ */
+
+/**
+ * @swagger
+ * /admin/login:
+ *   post:
+ *     summary: Logs in an admin
+ *     tags: [Admins]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       200:
+ *         description: Admin successfully logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: The JWT token for the admin
+ *       400:
+ *         description: Invalid credentials
+ *       500:
+ *         description: Some error happened
+ */
+
+/**
+ * @swagger
+ * /admin/loginToken:
+ *   post:
+ *     summary: Logs in an admin using token
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Admin successfully logged in with token
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Some error happened
+ */
+
+/**
+ * @swagger
+ * /admin/phoneChecker:
+ *   post:
+ *     summary: Checks the admin's phone number for password reset
+ *     tags: [Admins]
+ *     responses:
+ *       200:
+ *         description: Phone number checked successfully
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Some error happened
+ */
+
+/**
+ * @swagger
+ * /admin/passwordReset/{id}:
+ *   patch:
+ *     summary: Resets the admin's password
+ *     tags: [Admins]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The admin id
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Some error happened
+ */
+
+
+/**
+ * @swagger
+ * /admin/passwordChange/{id}:
+ *   patch:
+ *     summary: Changes the admin's password
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The admin id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 description: The current password of the admin
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password for the admin
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Some error happened
+ */
+
+
+
+
+/**
+ * @swagger
+ * /admin/forget-password/:
+ *   post:
+ *     summary: admin forget password
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               phoneNumber:
+ *                 type: string
+ *                 description: The phoneNumber of the admin
+ *               email:
+ *                 type: string
+ *                 description: The email for the admin
+ *             required:
+ *               - phoneNumber
+ *               - email
+ *     responses:
+ *       200:
+ *         description: Password rest link is successfully sent
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Admin not found
+ */
+
+
+
+/**
+ * @swagger
+ * /admin/start-system:
+ *   post:
+ *     summary: Starting the system by creating the first super user.
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Admin'
+ *     responses:
+ *       201:
+ *         description: System started successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Some error happened
+ */
+
+
+/**
+ * @swagger
+ * /admin/reset-password/{token}:
+ *   patch:
+ *     summary: reset the admin password
+ *     tags: [Admins]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The reset password token sent to an email
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password for the admin
+ *             required:
+ *               - newPassword
+ *     responses:
+ *       200:
+ *         description: password is successfully reset
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Some error happened
+ */
+
+
