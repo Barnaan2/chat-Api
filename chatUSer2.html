@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User 1</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 20px;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      button {
+        padding: 10px;
+        margin: 5px;
+        cursor: pointer;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+      }
+
+      input {
+        padding: 8px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+    </style>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  </head>
+
+  <body>
+    <h1>WebSocket Test</h1>
+
+    <label for="message">message</label>
+    <input type="text" id="messageInput" placeholder="Enter message" />
+    <label for="chat">chat</label>
+    <input type="text" id="chatInput" placeholder="id" />
+  
+    <button onclick="sendMessage()">Send Location</button>
+
+    <script>
+      const socket = io("http://127.0.0.1:5000");
+
+      socket.on("connect", () => {
+        console.log("Connection is established.");
+});
+
+   socket.on("newMessage",(newMessage)=>{
+   const message = newMessage.message;
+   console.log(message);
+   alert(message);
+   })
+   // list of chat which the user can receive message in.
+   const myChat = ["id","234r4"];
+     
+socket.on(myChat[0],(data) =>{
+  alert(data);
+console.log(data);
+});
+      function sendMessage() {
+        const messageText = document.getElementById("messageInput").value;
+        const chatId = document.getElementById("chatInput").value;
+        const message = { "chat":chatId, "sender":"senderID","message":messageText, "type":"text" };
+        // Send location object to the server
+       console.log(message); 
+       socket.emit("sendMessage", message);
+    //   socket.emit("joinRoom","id");
+      
+
+      }
+    </script>
+  </body>
+</html>
+

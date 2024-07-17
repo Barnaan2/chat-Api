@@ -77,7 +77,9 @@ server.listen(5000, () => {
 });
 // SOCKET ROUTES.
 const {connection} = require('./Socket/connection');
-SocketIo.on("connection", connection);
+SocketIo.on("connection", async (socket) => {
+	connection(socket, SocketIo);
+});
 
 
 // The error handler for all asynchronous codes.
